@@ -234,7 +234,7 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
     }
 
     public String toString() {
-        return "Heap: " + heap.toString() + " - Size = " + heap.size();
+        return heap.toString();
     }
 
     /**
@@ -320,8 +320,11 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
     public static void main(String[] args) {
         double start = System.currentTimeMillis();
         getPQTimes();
-        System.out.println("PQTime = " + (System.currentTimeMillis() - start));
+        double pq_end = System.currentTimeMillis() - start;
+        System.out.println("PQTime = " + pq_end + "\n");
+
         getHeapSortTimes();
+        System.out.println("HSTime = " + (System.currentTimeMillis() - pq_end) + "\n");
 
         /*
         Integer[] arr = new Integer[]{2, 5, 16, 4, 10, 23, 39, 18, 26, 15};

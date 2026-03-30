@@ -6,6 +6,7 @@ import interfaces.Entry;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.Test;
@@ -137,22 +138,137 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     }
 
     public String toString() {
-        return entrySet().toString();
+        return Arrays.toString(table);
+        //return entrySet().toString();
     }
 
     public static void sortValues(ChainHashMap<String, Integer> map) {
+        int[] not_null = new int[map.size()];
+        int index = 0;
+
         for (int i = 0 ; i < map.table.length ; i++) {
             if (map.table[i] != null){
                 map.table[i].sortMap(map.table[i]);
-                if (i > 0){
-                    if (map.table[i].getFirst() < map.table[i - 1].getFirst()){
+                not_null[index] = i;
+                index++;
+            }
+        }
 
-                    }
-                }
+        //System.out.println("UnsortedMaps sorted:\n" + map);
+        for (int i = 0 ; i < not_null.length ; i++) {
+            //System.out.println("Map[" + i + "] = " + map.table[i]);
+            for (int j = 0 ; j < not_null.length - 1 ; j++) {
+                chainSwap(map, not_null[j], not_null[j + 1]);
             }
         }
     }
 
+    private static void chainSwap(ChainHashMap<String, Integer> map, int i, int j) {
+        if (map.table[i].getFirst() > map.table[j].getFirst()){
+            UnsortedTableMap<String, Integer> temp = map.table[i];
+            map.table[i] = map.table[j];
+            map.table[j] = temp;
+        }
+    }
+
+    private static ChainHashMap<String, Integer> wordCounter(String path) throws FileNotFoundException {
+        File f = new File(path); // check the path to the file
+        ChainHashMap<String, Integer> counter = new ChainHashMap<>();
+
+        Scanner scanner = new Scanner(f);
+        while (scanner.hasNext())
+        { // read the file word at a time
+            String word = scanner.next();
+            //System.out.println("word:" + word);
+            if (counter.get(word) == null) {
+                counter.put(word, 1);
+            }
+            else {
+                counter.put(word, counter.get(word) + 1);
+            }
+        }
+        return counter;
+    }
+
+    private static int sumCollisions(int[] collisions){
+        int c = 0;
+        for (int i : collisions) {
+            for (int j : collisions) {
+                if (i == j) {
+                    c++;
+                }
+            }
+        }
+        return c;
+    }
+
+    public static int poly_col(ChainHashMap<String, Integer> map, int a) {
+        int[] collisions = new int[map.size()];
+        int h = 0;
+
+        for (UnsortedTableMap<String, Integer> m : map.table) {
+            if (m == null) {
+                continue;
+            }
+            for (MapEntry<String, Integer> ent : m.getTable()) {
+                collisions[h] = map.hash_poly(ent.getKey(), a);
+                h++;
+            }
+        }
+
+        System.out.println("Hashes: " + Arrays.toString(collisions));
+        return sumCollisions(collisions);
+    }
+
+    public static int cyclic_col(ChainHashMap<String, Integer> map, int shift) {
+        int[] collisions = new int[map.size()];
+        int h = 0;
+
+        for (UnsortedTableMap<String, Integer> m : map.table) {
+            if (m == null) {
+                continue;
+            }
+            for (MapEntry<String, Integer> ent : m.getTable()) {
+                collisions[h] = map.hash_cyclic(ent.getKey(), shift);
+                h++;
+            }
+        }
+
+        System.out.println("Cyclic Hashes: " + Arrays.toString(collisions));
+        return sumCollisions(collisions);
+    }
+
+    public static int oldCol(ChainHashMap<String, Integer> map) {
+        return 0;
+    }
+
+    private int hash_poly(String s, int a) {
+        int h = 0;
+        int n = s.length();
+        for(int i = 0; i < n; i++) {
+            char s_i = s.charAt(i);
+            int v = s_i * ((int) Math.pow(a, n - i - 1));
+            h += v;
+        }
+        return h;
+    }
+    private int hash_cyclic(String s, int shift) {
+        int h = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            h = (h << shift) | (h >>> (32 - shift));
+            h += s.charAt(i);
+        }
+        return h;
+    }
+    private int hashCode(String s) {
+        int hash = 0;
+        int skip = Math.max(1, s.length() / 8);
+        for (int i = 0; i < s.length(); i += skip) {
+            hash = (hash * 37) + s.charAt(i);
+        }
+        return hash;
+    }
+    
     public static void main(String[] args) throws FileNotFoundException {
         /*
         ChainHashMap<String, Integer> map = new ChainHashMap<>();
@@ -181,24 +297,23 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         System.out.println("m: " + m);
         */
 
-        File f = new File("C:\\Users\\Senan\\OneDrive\\Documents\\sample_2.txt"); // check the path to the file
-        ChainHashMap<String, Integer> counter = new ChainHashMap<>();
-
-        Scanner scanner = new Scanner(f);
-        while (scanner.hasNext()) { // read the file word at a time
-            String word = scanner.next();
-            //System.out.println("word:" + word);
-            if (counter.get(word) == null) {
-                counter.put(word, 1);
-            }
-            else {
-                counter.put(word, counter.get(word) + 1);
-            }
-        }
-
+        // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\sample_text.txt"
+        // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\words.txt"
+        ChainHashMap<String, Integer> counter = wordCounter("C:\\Users\\Senan\\OneDrive\\Documents\\College\\2nd Yr Spring\\COMP20280 - Data Structures\\sample_text.txt");
         System.out.println(counter);
+
         sortValues(counter);
-        System.out.println(counter);
+        //System.out.println(counter);
+
+        System.out.println("Collisions with poly_acc, a = 41: " + poly_col(counter, 41));
+        System.out.println("Collisions with poly_acc, a = 17: " + poly_col(counter, 17));
+        System.out.println("Collisions with cyclic shift = 7: " + cyclic_col(counter, 7));
+
+        /*
+        for (int i = 0 ; i < 32 ; i++) {
+            System.out.println("Collisions with cyclic shift " + i + ": " + cyclic_col(counter, i));
+        }
+        */
     }
 }
 

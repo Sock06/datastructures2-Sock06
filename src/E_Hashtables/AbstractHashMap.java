@@ -81,7 +81,6 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
      */
     @Override
     public V get(K key) {
-        //System.out.println("Getting key " + key + " with hash of " + hashValue(key));
         return bucketGet(hashValue(key), key);
     }
 
@@ -129,9 +128,6 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
      */
     private int hashValue(K key) {
         int k = key.hashCode();
-
-        //int h = Math.toIntExact(abs((shift*k + scale) % prime) % capacity);
-        //System.out.println("HV for " + key + " = " + h);
         return Math.toIntExact(abs((shift*k + scale) % prime) % capacity);
     }
 

@@ -3,13 +3,12 @@ package E_Hashtables;
 import interfaces.Entry;
 
 import java.util.*;
-import java.util.Comparator;
-
 /**
  * An implementation of a map using an unsorted table.
  */
 
 public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
+
     /**
      * Underlying storage for the map of entries.
      */
@@ -47,6 +46,10 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
         return table.size();
     }
 
+    public ArrayList<MapEntry<K, V>> getTable() {
+        return table;
+    }
+
     /**
      * Returns the value associated with the specified key, or null if no such entry
      * exists.
@@ -63,20 +66,25 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
         return this.table.get(i).getValue();
     }
 
-    public V getFirst(){
+    public V getFirst() {
         return this.table.getFirst().getValue();
     }
 
     public void sortMap(UnsortedTableMap<String, Integer> map) {
         for (int i = 0 ; i < map.size() ; i++) {
-            for (int j = i ; j < map.size() - 1 ; j++) {
+            for (int j = 0 ; j < map.size() - 1 ; j++) {
                 if (map.table.get(j).getValue() > map.table.get(j + 1).getValue()) {
-                    int temp = map.table.get(j).getValue();
-                    map.table.get(j).setValue(map.table.get(j + 1).getValue());
-                    map.table.get(j + 1).setValue(temp);
+                    swap(map, j);
                 }
             }
         }
+    }
+
+    private void swap(UnsortedTableMap<String, Integer> map, int index) {
+        MapEntry<String, Integer> temp = map.table.get(index);
+
+        map.table.set(index, map.table.get(index + 1));
+        map.table.set(index + 1, temp);
     }
 
     /**
@@ -163,14 +171,14 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     }
 
     public String toString() {
-        return table.toString() + "\n";
+        return table.toString();
     }
 
     public static void main(String[] args) {
         UnsortedTableMap<String, String> utm = new UnsortedTableMap<>();
 
         for (int i = 0 ; i < 15 ; i++) {
-            utm.put(Integer.toString(i), ("String: " + Integer.toString(i)));
+            utm.put(Integer.toString(i), ("String: " + i));
         }
 
         System.out.println(utm);

@@ -192,9 +192,10 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
 
     private static int sumCollisions(int[] collisions){
         int c = 0;
-        for (int i : collisions) {
-            for (int j : collisions) {
-                if (i == j) {
+        for (int i = 0 ; i < collisions.length ; i++) {
+            for (int j = i + 1 ; j < collisions.length ; j++) {
+                if (collisions[i] == collisions[j] && collisions[i] != 0) {
+                    System.out.println("c = " + c + ": " + i + " = " + j + " where " + collisions[i] + " = " + collisions[j]);
                     c++;
                 }
             }
@@ -239,7 +240,21 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     }
 
     public static int oldCol(ChainHashMap<String, Integer> map) {
-        return 0;
+        int[] collisions = new int[map.size()];
+        int h = 0;
+
+        for (UnsortedTableMap<String, Integer> m : map.table) {
+            if (m == null) {
+                continue;
+            }
+            for (MapEntry<String, Integer> ent : m.getTable()) {
+                collisions[h] = map.hashOldCode(ent.getKey());
+                h++;
+            }
+        }
+
+        System.out.println("Old Java Hashes: " + Arrays.toString(collisions));
+        return sumCollisions(collisions);
     }
 
     private int hash_poly(String s, int a) {
@@ -260,7 +275,7 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         }
         return h;
     }
-    private int hashCode(String s) {
+    private int hashOldCode(String s) {
         int hash = 0;
         int skip = Math.max(1, s.length() / 8);
         for (int i = 0; i < s.length(); i += skip) {
@@ -270,7 +285,6 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     }
     
     public static void main(String[] args) throws FileNotFoundException {
-        /*
         ChainHashMap<String, Integer> map = new ChainHashMap<>();
 
         int n = 10;
@@ -295,8 +309,8 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
 
         m.remove(11);
         System.out.println("m: " + m);
-        */
 
+        /*
         // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\sample_text.txt"
         // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\words.txt"
         ChainHashMap<String, Integer> counter = wordCounter("C:\\Users\\Senan\\OneDrive\\Documents\\College\\2nd Yr Spring\\COMP20280 - Data Structures\\sample_text.txt");
@@ -308,8 +322,9 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         System.out.println("Collisions with poly_acc, a = 41: " + poly_col(counter, 41));
         System.out.println("Collisions with poly_acc, a = 17: " + poly_col(counter, 17));
         System.out.println("Collisions with cyclic shift = 7: " + cyclic_col(counter, 7));
+        System.out.println("Collisions with old java hash method: " + oldCol(counter));
 
-        /*
+
         for (int i = 0 ; i < 32 ; i++) {
             System.out.println("Collisions with cyclic shift " + i + ": " + cyclic_col(counter, i));
         }

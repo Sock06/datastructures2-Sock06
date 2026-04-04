@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     // a fixed capacity array of UnsortedTableMap that serve as buckets
-    private UnsortedTableMap<K, V>[] table; // initialized within createTable
+    private UnsortedTableMap<K, V>[] table; // initialised within createTable
 
     /**
      * Creates a hash table with capacity 11 and prime factor 109345121.
@@ -142,6 +142,26 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         //return entrySet().toString();
     }
 
+    private static ChainHashMap<String, Integer> wordCounter(String path) throws FileNotFoundException {
+        File f = new File(path); // check the path to the file
+        ChainHashMap<String, Integer> counter = new ChainHashMap<>();
+
+        Scanner scanner = new Scanner(f);
+        while (scanner.hasNext())
+        { // read the file word at a time
+            String word = scanner.next();
+            //System.out.println("word:" + word);
+            if (counter.get(word) == null) {
+                counter.put(word, 1);
+            }
+            else {
+                counter.put(word, counter.get(word) + 1);
+            }
+        }
+        return counter;
+    }
+
+    /*
     public static void sortValues(ChainHashMap<String, Integer> map) {
         int[] not_null = new int[map.size()];
         int index = 0;
@@ -169,25 +189,6 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
             map.table[i] = map.table[j];
             map.table[j] = temp;
         }
-    }
-
-    private static ChainHashMap<String, Integer> wordCounter(String path) throws FileNotFoundException {
-        File f = new File(path); // check the path to the file
-        ChainHashMap<String, Integer> counter = new ChainHashMap<>();
-
-        Scanner scanner = new Scanner(f);
-        while (scanner.hasNext())
-        { // read the file word at a time
-            String word = scanner.next();
-            //System.out.println("word:" + word);
-            if (counter.get(word) == null) {
-                counter.put(word, 1);
-            }
-            else {
-                counter.put(word, counter.get(word) + 1);
-            }
-        }
-        return counter;
     }
 
     private static int sumCollisions(int[] collisions){
@@ -283,7 +284,8 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         }
         return hash;
     }
-    
+    */
+
     public static void main(String[] args) throws FileNotFoundException {
         ChainHashMap<String, Integer> map = new ChainHashMap<>();
 
@@ -296,8 +298,8 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         int r = map.remove("5");
         System.out.println("Size: " + map.size() + ", removed " + r);
 
-        int[] hash = map.getHashValues(new int[]{12, 44, 13, 88, 23, 94, 11, 39, 20, 16, 5});
-        System.out.println("Q4 getHashValues:" + Arrays.toString(hash));
+        //int[] hash = map.getHashValues(new int[]{12, 44, 13, 88, 23, 94, 11, 39, 20, 16, 5});
+        //System.out.println("\nQ4 getHashValues : " + Arrays.toString(hash) + "\n");
 
         ChainHashMap<Integer, String> m = new ChainHashMap<>();
         m.put(1, "One");
@@ -310,12 +312,11 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         m.remove(11);
         System.out.println("m: " + m);
 
+        ChainHashMap<String, Integer> counter = wordCounter("/home/senanoc/Downloads/sample_text.txt");
+        System.out.println("\nWord Count:\n" + counter);
         /*
         // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\sample_text.txt"
         // "C:\Users\Senan\OneDrive\Documents\College\2nd Yr Spring\COMP20280 - Data Structures\words.txt"
-        ChainHashMap<String, Integer> counter = wordCounter("C:\\Users\\Senan\\OneDrive\\Documents\\College\\2nd Yr Spring\\COMP20280 - Data Structures\\sample_text.txt");
-        System.out.println(counter);
-
         sortValues(counter);
         //System.out.println(counter);
 

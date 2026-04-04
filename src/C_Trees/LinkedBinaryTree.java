@@ -159,6 +159,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      */
     @Override
     public Position<E> parent(Position<E> p) throws IllegalArgumentException {
+        validate(p);
         return ((Node<E>) p).getParent();
     }
 
@@ -171,6 +172,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      */
     @Override
     public Position<E> left(Position<E> p) throws IllegalArgumentException {
+        validate(p);
         return ((Node<E>) p).getLeft();
     }
 
@@ -183,6 +185,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      */
     @Override
     public Position<E> right(Position<E> p) throws IllegalArgumentException {
+        validate(p);
         return ((Node<E>) p).getRight();
     }
 
@@ -201,7 +204,6 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         {
             if (curr_node == root)
             {
-
                 return l;
             }
             return l + 1;
@@ -250,6 +252,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      * @throws IllegalArgumentException if p already has a left child
      */
     public Position<E> addLeft(Position<E> p, E e) throws IllegalArgumentException {
+        validate(p);
         Node<E> new_left = new Node<>(e, ((Node<E>) p), null, null);
         ((Node<E>) p).setLeft(new_left);
         size++;
@@ -284,7 +287,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      */
     public E set(Position<E> p, E e) throws IllegalArgumentException {
         E to_replace = p.getElement();
-        ((Node<E>) p).setElement(e);
+        set(p, e);
         return to_replace;
     }
 
@@ -315,23 +318,22 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
     public E remove(Position<E> p) throws IllegalArgumentException {
         E removed_elem = p.getElement();
 
-        if ( ((Node<E>) p).getRight() != null && ((Node<E>) p).getLeft() != null)
-        {
+        if (right(p) != null && left(p) != null) {
             throw new IllegalArgumentException();
         }
-        if ( ((Node<E>) p).getRight() != null)
-        {
-            Node<E> r = ((Node<E>) p).getRight();
-            r.setParent(((Node<E>) p).getParent());
+
+        if (left(p) != null) {
+            Position<E> l = left(p);
+            set(parent(l), parent(p).getElement());
         }
-        if ( ((Node<E>) p).getLeft() != null)
-        {
-            Node<E> l = ((Node<E>) p).getLeft();
-            l.setParent(((Node<E>) p).getParent());
+
+        else if (right(p) != null) {
+            Position<E> r = right(p);
+            set(parent(r), parent(p).getElement());
         }
 
         size--;
-        ((Node<E>) p).setParent((Node<E>) p);
+        set(parent(p), p.getElement());
         return removed_elem;
     }
 

@@ -1,12 +1,11 @@
 package E_Hashtables;
 
 import interfaces.Entry;
-
 import java.util.*;
+
 /**
  * An implementation of a map using an unsorted table.
  */
-
 public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
 
     /**
@@ -35,7 +34,6 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     }
 
     // public methods
-
     /**
      * Returns the number of entries in the map.
      *
@@ -70,6 +68,24 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
         return this.table.getFirst().getValue();
     }
 
+    /*
+    public static void sortMap(UnsortedTableMap<? extends Comparable, ? extends Comparable> map) {
+        for (int i = 0 ; i < map.size() ; i++) {
+            for (int j = 0 ; j < map.size() - 1 ; j++) {
+                if (map.table.get(j).getValue().compareTo(map.table.get(j + 1).getValue()) > 0) {
+                    swap(map, j);
+                }
+            }
+        }
+    }
+
+    private static void swap(UnsortedTableMap<? extends Comparable, ? extends Comparable> map, int index) {
+        MapEntry<?, ?> temp = map.table.get(index);
+
+        map.table.set(index, map.table.get(index + 1));
+        map.table.set(index + 1, temp);
+    }
+    */
     public void sortMap(UnsortedTableMap<String, Integer> map) {
         for (int i = 0 ; i < map.size() ; i++) {
             for (int j = 0 ; j < map.size() - 1 ; j++) {
@@ -86,6 +102,7 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
         map.table.set(index, map.table.get(index + 1));
         map.table.set(index + 1, temp);
     }
+
 
     /**
      * Associates the given value with the given key. If an entry with the key was
@@ -174,6 +191,7 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
         return table.toString();
     }
 
+    @SuppressWarnings("unused")
     public static void main(String[] args) {
         UnsortedTableMap<String, String> utm = new UnsortedTableMap<>();
 

@@ -23,11 +23,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public boolean isInternal(Position<E> p) {
-        if (children(p) != null)
-        {
-            return true;
-        }
-        return false;
+        return numChildren(p) > 0;
     }
 
     /**
@@ -39,7 +35,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public boolean isExternal(Position<E> p) {
-        return !isInternal(p);
+        return numChildren(p) <= 0;
     }
 
     /**
@@ -253,8 +249,10 @@ abstract class AbstractBinaryTree<E> extends AbstractTree<E> implements BinaryTr
      */
     @Override
     public Position<E> sibling(Position<E> p) {
-        // TODO
-        return null;
+        if (left(parent(p)) == p) {
+            return right(parent(p));
+        }
+        return left(parent(p));
     }
 
     /**
@@ -266,8 +264,14 @@ abstract class AbstractBinaryTree<E> extends AbstractTree<E> implements BinaryTr
      */
     @Override
     public int numChildren(Position<E> p) {
-        // TODO
-        return 0;
+        int count = 0;
+        if (left(p) != null) {
+            count++;
+        }
+        if (right(p) != null) {
+            count++;
+        }
+        return count;
     }
 
     /**

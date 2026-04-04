@@ -1,5 +1,8 @@
 package E_Hashtables;
 
+import interfaces.Entry;
+
+import java.util.ArrayList;
 import java.util.Random;
 import static java.lang.Math.abs;
 
@@ -113,10 +116,11 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
         return bucketPut(hashValue(key), key, value);
     }
 
+    // Q3 method. Ignore
     public int[] getHashValues(int[] arr) {
         int[] hashes = new int[arr.length];
         for (int n = 0 ; n < arr.length ; n++) {
-            hashes[n] = hashValueInt(arr[n]);
+            hashes[n] = Math.toIntExact(abs((shift*arr[n] + scale) % prime) % 19);
         }
 
         return hashes;
@@ -135,14 +139,23 @@ public abstract class AbstractHashMap<K, V> extends AbstractMap<K, V> {
         return Math.toIntExact(abs((shift*key + scale) % prime) % capacity);
     }
 
+
     /**
      * Updates the size of the hash table and rehashes all entries.
      */
-    private void resize(int newCap)
-    {
-        // TODO
+    private void resize(int newCap) {
+        ArrayList<Entry<K,V>> buffer = new ArrayList<>(n);
+        for (Entry<K, V> me : entrySet()){
+            buffer.add(me);
+        }
+
         capacity = newCap;
-        createTable();
+        createTable(); // based on updated capacity
+        n = 0; // will be recomputed while reinserting entries
+        for (Entry<K,V> me : buffer) {
+            put(me.getKey(), me.getValue());
+            n++;
+        }
     }
 
     // protected abstract methods to be implemented by subclasses

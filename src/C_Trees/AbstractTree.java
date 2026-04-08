@@ -59,8 +59,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     @Override
     public int numChildren(Position<E> p) {
         int count = 0;
-        for (Position a : children(p))
-        {
+        for (Position a : children(p)) {
             count++;
         }
         return count;
@@ -99,8 +98,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public int depth(Position<E> p) throws IllegalArgumentException {
         Position<E> up = p;
         int d = 0;
-        while (up != root())
-        {
+        while (up != root()) {
             d++;
             up = parent(p);
         }
@@ -204,7 +202,13 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * @param snapshot a list to which results are appended
      */
     private void postorderSubtree(Position<E> p, List<Position<E>> snapshot) {
-        // TODO
+        // TODO*
+        if (numChildren(p) > 0) {
+            for (Position<E> c: children(p)) {
+                postorderSubtree(c, snapshot);
+            }
+        }
+        snapshot.add(p);
     }
 
     /**
@@ -239,7 +243,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
  */
 abstract class AbstractBinaryTree<E> extends AbstractTree<E> implements BinaryTree<E>
 {
-
     /**
      * Returns the Position of p's sibling (or null if no sibling exists).
      *
@@ -299,13 +302,11 @@ abstract class AbstractBinaryTree<E> extends AbstractTree<E> implements BinaryTr
      * @param snapshot a list to which results are appended
      */
     private void inorderSubtree(Position<E> p, List<Position<E>> snapshot) {
-        if (this.left(p) != null)
-        {
+        if (this.left(p) != null) {
             inorderSubtree(this.left(p), snapshot);
         }
         snapshot.add(p);
-        if (this.right(p) != null)
-        {
+        if (this.right(p) != null) {
             inorderSubtree(this.right(p), snapshot);
         }
     }

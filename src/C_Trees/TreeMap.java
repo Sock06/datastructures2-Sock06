@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Random;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -373,6 +371,7 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
         if (isExternal(p)) {
             expandExternal(p, new MapEntry<>(key, value));
             rebalanceInsert(p);
+            //remove((Position<Entry<K, V>>) null);
             return null;
         }
         else {
@@ -405,20 +404,11 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
             set(inode, sub.getElement());
             inode = sub;
         }
-        else {
-            Position<Entry<K, V>> child;
-            if (isInternal(left(inode))) {
-                child = left(inode);
-            }
-            else {
-                child = right(inode);
-            }
-
-            remove(sibling(child));
-        }
-
+        Position<Entry<K,V>> leaf = (isExternal(left(inode)) ? left(inode) : right(inode));
+        Position<Entry<K,V>> sib = sibling(leaf);
+        remove(leaf);
         remove(inode);
-        rebalanceDelete(inode);
+        rebalanceDelete(sib);
         return old;
     }
 
@@ -572,7 +562,6 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
         return lowSearch(left(pos), key);
     }
 
-
     // Support for iteration
     /**
      * Returns an iterable collection of all key-value entries of the map.
@@ -609,6 +598,7 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
         return s.substring(0, s.length() - 2) + "]";
     }
 
+    /*
     public void printLR() {
         Position<Entry<K, V>> p = root();
         System.out.println("Root: " + root());
@@ -633,7 +623,7 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
             printLRHelp(right(p));
         }
     }
-
+    */
     /**
      * Returns an iterable containing all entries with keys in the range from
      * <code>fromKey</code> inclusive to <code>toKey</code> exclusive.
@@ -703,11 +693,12 @@ public class TreeMap<K, V> extends AbstractSortedMap<K, V> {
 
         for (Integer i : arr) {
             map.put(i, Integer.toString(i));
+            System.out.println(map);
         }
 
-        //map.printLR();
-        System.out.println("LE 24 (23) => " + map.lowerEntry(24).getKey());
-        System.out.println("LE 31 (26) => " + map.lowerEntry(31).getKey());
+        System.out.println(map);
+        map.remove(26);
+        System.out.println(map);
     }
 }
 

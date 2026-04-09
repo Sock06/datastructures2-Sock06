@@ -34,31 +34,31 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      * Returns the height of the given tree position.
      */
     protected int height(Position<Entry<K, V>> p) {
-        // TODO
-        return 0;
+        return tree.getAux(p);
     }
 
     /**
      * Recomputes the height of the given position based on its children's heights.
      */
     protected void recomputeHeight(Position<Entry<K, V>> p) {
-        // TODO
+        tree.setAux(p,1 + Math.max(height(left(p)), height(right(p))));
     }
 
     /**
      * Returns whether a position has balance factor between -1 and 1 inclusive.
      */
     protected boolean isBalanced(Position<Entry<K, V>> p) {
-        // TODO
-        return false;
+        return Math.abs(height(left(p)) - height(right(p))) <= 1;
     }
 
     /**
      * Returns a child of p with height no smaller than that of the other child.
      */
     protected Position<Entry<K, V>> tallerChild(Position<Entry<K, V>> p) {
-        // TODO
-        return null;
+        if (height(left(p)) > height(right(p))) {
+            return left(p);
+        }
+        return right(p);
     }
 
     /**
@@ -83,7 +83,7 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     @Override
     protected void rebalanceDelete(Position<Entry<K, V>> p) {
-        // TODO
+        super.rebalanceDelete(p);
     }
 
     /**
@@ -104,6 +104,19 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
         return true;
     }
 
+    @Override
+    public String toString() {
+        String s = "[";
+        for (Entry <K, V> p : tree) {
+            if (p == null) {
+                s += "⦰, ";
+            }
+            else {
+                s += p.getKey() + ", ";
+            }
+        }
+        return s.substring(0, s.length()-2) + "]";
+    }
 
     public static void main(String[] args) {
         /*
@@ -181,13 +194,15 @@ class AVLTreeMapTest {
         //assertEquals("26", map.remove(26));
         //assertEquals(11, map.size());
 
-        assertEquals("[4, 7, 8, 11, 12, 13, 14, 17, 53]", map.toString());
+        //assertEquals("[4, 7, 8, 11, 12, 13, 14, 17, 53]", map.toString());
+        assertEquals("[4, 7, 8, 11, 12, 13, 14, 17, 53]", map.printKeys());
 
         map.remove(53);
 
         System.out.println(map.toBinaryTreeString());
 
-        assertEquals("[4, 7, 8, 11, 12, 13, 14, 17]", map.toString());
+        //assertEquals("[4, 7, 8, 11, 12, 13, 14, 17]", map.toString());
+        assertEquals("[4, 7, 8, 11, 12, 13, 14, 17]", map.printKeys());
 
     }
 

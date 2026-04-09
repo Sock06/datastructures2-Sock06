@@ -311,41 +311,34 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
      * @throws IllegalArgumentException if p has two children.
      */
     public E remove(Position<E> p) throws IllegalArgumentException {
-        E removed_elem = p.getElement();
+        Node<E> node = validate(p);
+        E removed_elem = node.getElement();
 
-        /*
         if (right(p) != null && left(p) != null) {
             throw new IllegalArgumentException();
         }
-        */
 
-        if (root() == p) {
-            E root_elem = root().getElement();
-            if (left(p) != null) {
-                set(root(), left(p).getElement());
-                set(parent(left(p)), null);
-
-            }
-
-            else if (right(p) != null) {
-                set(root(), right(p).getElement());
-            }
-            size--;
-            return root_elem;
+        Node<E> child = node.getLeft() != null ? node.getLeft() : node.getRight();
+        if (child != null) {
+            child.setParent(node.getParent());
         }
-
-        if (left(p) != null) {
-            Position<E> l = left(p);
-            set(parent(l), parent(p).getElement());
+        if (root == node) {
+            root = child;
         }
-
-        else if (right(p) != null) {
-            Position<E> r = right(p);
-            set(parent(r), parent(p).getElement());
+        else {
+            if (node.getParent().getLeft() == node) {
+                node.getParent().setLeft(child);
+            }
+            else {
+                node.getParent().setRight(child);
+            }
         }
 
         size--;
-        set(parent(p), p.getElement());
+        node.setRight(null);
+        node.setLeft(null);
+        node.setParent(node);
+        node.setElement(null);
         return removed_elem;
     }
 
@@ -413,37 +406,6 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         return p;
     }
 
-    /*
-    public String levelOrderString() {
-        StringBuilder sb = new StringBuilder("[");
-
-        sb.append(levelOrderHelper(this.root));
-        sb.append("]");
-
-        String los = sb.toString();
-        los.replace(",  , ", ",");
-
-        return los;
-    }
-
-    private String levelOrderHelper(Node<E> to_print) {
-        if (to_print == null) {
-            return "null";
-        }
-        if (to_print.left == null && to_print.right == null)
-        {
-            if (to_print.getElement() == null) {
-                return "null";
-            }
-            else {
-                return to_print.getElement().toString();
-            }
-        }
-
-        return to_print.getElement() + ", " + StringHelper(to_print.left) + ", " + StringHelper(to_print.right);
-    }
-     */
-
     int countExternal(Node<E> curr_node) {
         int l = 0, r = 0;
         if (curr_node.left == null && curr_node.right == null) {
@@ -500,8 +462,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         root.setRight(treeConstructHelper(r_io, r_pre, root));
     }
 
-    private Node<E> treeConstructHelper(E[] inorder, E[] preorder, Node<E> parent)
-    {
+    private Node<E> treeConstructHelper(E[] inorder, E[] preorder, Node<E> parent) {
         if (inorder.length < 1 || preorder.length < 1) {
             return null;
         }
@@ -561,12 +522,10 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 
     private ArrayList<ArrayList<E>> all_paths;
     public void rootToLeafPaths() {
-        if (isEmpty())
-        {
+        if (isEmpty()) {
             System.out.println("Empty BT");
         }
-        else
-        {
+        else {
             ArrayList<E> fromRoot = new ArrayList<>(nodeHeight(root));
             rootToLeafPath(root, fromRoot);
         }
@@ -576,18 +535,14 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         curr_path.add(node.getElement());
         ArrayList<E> new_path = (ArrayList<E>) curr_path.clone();
 
-        if (node.left == null && node.right == null)
-        {
+        if (node.left == null && node.right == null) {
             this.all_paths.add(new_path);
         }
-        else
-        {
-            if (node.left != null)
-            {
+        else {
+            if (node.left != null) {
                 rootToLeafPath(node.left, new_path);
             }
-            if (node.right != null)
-            {
+            if (node.right != null) {
                 rootToLeafPath(node.right, new_path);
             }
         }
@@ -605,31 +560,25 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
     }
 
     public void LeafPrinter(Node<E> n) {
-        if (n.left == null && n.right == null)
-        {
+        if (n.left == null && n.right == null) {
             System.out.print(n + ", ");
         }
-        else
-        {
-            if (n.left != null)
-            {
+        else {
+            if (n.left != null) {
                 LeafPrinter(n.getLeft());
             }
-            if (n.right != null)
-            {
+            if (n.right != null) {
                 LeafPrinter(n.getRight());
             }
         }
     }
 
-    public void LeafPrint2()
-    {
+    public void LeafPrint2() {
         this.rootToLeafPaths();
         ArrayList<ArrayList<E>> paths = this.getRootLeafPaths();
         E[] leaves = (E[]) new Object[paths.size()/2];
 
-        for (int i = 0 ; i < paths.size()/2 ; i++)
-        {
+        for (int i = 0 ; i < paths.size()/2 ; i++) {
             ArrayList<E> al = paths.get(i);
             leaves[i] = al.getLast();
         }
@@ -656,8 +605,7 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
 
         bt.rootToLeafPaths();
         ArrayList<ArrayList<Integer>> paths = bt.getRootLeafPaths();
-        for (ArrayList<Integer> ALI : paths)
-        {
+        for (ArrayList<Integer> ALI : paths) {
             System.out.println(ALI + "   Size = " + ALI.size());
         }
 

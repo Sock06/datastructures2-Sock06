@@ -209,5 +209,4 @@ public class BinaryTreePrinter<N> {
     public static void main(String[] args) {
 
     }
-
 }
